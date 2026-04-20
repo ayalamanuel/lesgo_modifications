@@ -673,31 +673,6 @@ do
                 read (buff(equal_pos+1:), *) zplane_nskip
             case ('ZPLANE_LOC')
                 call parse_vector( buff(equal_pos+1:), zplane_nloc, zplane_loc )
-            case ('PAVG_CALC')
-                read (buff(equal_pos+1:), *) pavg_calc
-            case ('PAVG_TSTART')
-                read (buff(equal_pos+1:), *) pavg_tstart
-            case ('PAVG_TEND')
-                read (buff(equal_pos+1:), *) pavg_tend
-            case ('PAVG_NBINS')
-                read (buff(equal_pos+1:), *) pavg_nbins
-            case ('PAVG2D_CALC')
-                read (buff(equal_pos+1:), *) pavg2D_calc
-            case ('PAVG2D_TSTART')
-                read (buff(equal_pos+1:), *) pavg2D_tstart
-            case ('PAVG2D_TEND')
-                read (buff(equal_pos+1:), *) pavg2D_tend
-            case ('PAVG2D_NBINS')
-                read (buff(equal_pos+1:), *) pavg2D_nbins
-            case ('PAVG2DS_CALC')
-                read (buff(equal_pos+1:), *) pavg2Ds_calc
-            case ('PAVG2DS_TSTART')
-                read (buff(equal_pos+1:), *) pavg2Ds_tstart
-            case ('PAVG2DS_TEND')
-                read (buff(equal_pos+1:), *) pavg2Ds_tend
-            case ('PAVG2DS_NBINS')
-                read (buff(equal_pos+1:), *) pavg2Ds_nbins
-        
             case ('WAVEPLANE_CALC')
                 read (buff(equal_pos+1:), *) waveplane_calc
             case ('WAVEPLANE_NSTART')
@@ -714,39 +689,6 @@ do
                 read (buff(equal_pos+1:), *) mosdplane_nend
             case ('MOSDPLANE_NSKIP')
                 read (buff(equal_pos+1:), *) mosdplane_nskip
-            case ('CORRFUNC_SPACESPECTRA_CALC')
-                read (buff(equal_pos+1:), *) corrfunc_spacespectra_calc
-            case ('CORRFUNC_SPACESPECTRA_NSTART')
-                read (buff(equal_pos+1:), *) corrfunc_spacespectra_nstart
-            case ('CORRFUNC_SPACESPECTRA_NEND')
-                read (buff(equal_pos+1:), *) corrfunc_spacespectra_nend
-            case ('CORRFUNC_SPACESPECTRA_NSKIP')
-                read (buff(equal_pos+1:), *) corrfunc_spacespectra_nskip
-           case ('NT')
-                read (buff(equal_pos+1:), *) nt           
-            case ('CORRFUNC_SPACESPECTRA_HEIGHTS')
-                call parse_vector( buff(equal_pos+1:),corrfunc_spacespectra_nheights, corrfunc_spacespectra_heights )
-            case ('SPECTRA_SPACETIME_CALC')
-                read (buff(equal_pos+1:), *) spectra_spacetime_calc
-            case ('SPECTRA_SPACETIME_NSTART')
-                read (buff(equal_pos+1:), *) spectra_spacetime_nstart
-            case ('SPECTRA_SPACETIME_NEND')
-                read (buff(equal_pos+1:), *) spectra_spacetime_nend
-            case ('SPECTRA_SPACETIME_HEIGHTS')
-                call parse_vector( buff(equal_pos+1:), spectra_spacetime_nheights, spectra_spacetime_heights )            
-            case ('SPECTRA_WINDOW')
-                read (buff(equal_pos+1:), *) spectra_window
-            case ('SPECTRA_OVERLAP')
-                read (buff(equal_pos+1:), *) spectra_overlap
-
-            case ('SPACETIME_CALC')
-                read (buff(equal_pos+1:), *) spacetime_calc
-            case ('SPACETIME_NSTART')
-                read (buff(equal_pos+1:), *) spacetime_nstart
-            case ('SPACETIME_NEND')
-                read (buff(equal_pos+1:), *) spacetime_nend
-            case ('SPACETIME_LOC')
-                call parse_vector( buff(equal_pos+1:), spacetime_nloc, spacetime_loc )
             case default
                 if (coord == 0) write(*,*) 'Found unused data value in '       &
                     // block_name // ' block: ' // buff(1:equal_pos-1)
