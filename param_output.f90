@@ -111,7 +111,7 @@ write(2,f_fmt) 'wave_freq : ', wave_freq
 write(2,f_fmt) 'ubot : ', ubot
 write(2,f_fmt) 'utop : ', utop
 write(2,l_fmt) 'smooth_eqm : ', smooth_eqm
-write(2,f_fmt) 'zgrid_match : ', zgrid_match
+write(2,i_fmt) 'zgrid_match : ', zgrid_match
 write(2,f_fmt) 'zo : ', zo
 write(2,l_fmt) 'inflow_type : ', inflow_type
 write(2,f_fmt) 'fringe_region_end : ', fringe_region_end
@@ -183,6 +183,12 @@ write(2,i_fmt) 'zplane_nloc : ', zplane_nloc
 do n=1,zplane_nloc
   write(2,if_fmt) 'n, zplane_loc(n) : ', n, zplane_loc(n)
 enddo
+
+write(2,l_fmt) 'pavg_calc : ', pavg_calc
+write(2,x3i_fmt) 'pavg_tstart, pavg_tend, pavg_nbins : ', pavg_tstart, pavg_tend, pavg_nbins
+
+write(2,l_fmt) 'pavg2D_calc : ', pavg2D_calc
+write(2,x3i_fmt) 'pavg2D_tstart, pavg2D_tend, pavg2D_nbins : ', pavg2D_tstart, pavg2D_tend, pavg2D_nbins
 
 #ifdef PPLVLSET
 write(2,c_fmt) ''

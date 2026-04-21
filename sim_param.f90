@@ -49,7 +49,7 @@ real(rprec), dimension(:,:), allocatable :: K_wave, D_spread, phi, omega_wave ,&
 
 complex(rprec), dimension(:,:), allocatable :: eta_hat_o, eta_hat_o_filter
 
-real(rprec) :: delta_wpm
+real(rprec) :: delta_wpm, delta_m
 contains
 
 !*******************************************************************************
@@ -138,6 +138,7 @@ allocate ( fz(ld, ny, nz) ); fz = 0.0_rprec
 allocate( ustar_lbc(nx, ny) ); ustar_lbc = u_star
 
 delta_wpm = 0.0_rprec
+delta_m = 0.0_rprec
 
 sim_param_initialized = .true.
 

@@ -194,7 +194,7 @@ real(rprec) :: utop = 0.0_rprec   ! nondimensional
 
 ! lower boundary condition, roughness length
 logical :: smooth_eqm = .false.
-real(rprec) :: zgrid_match = 2.5_rprec
+integer :: zgrid_match = 3
 real(rprec) :: zo = 0.0001_rprec ! nondimensional
 
 ! prescribed inflow:
@@ -281,6 +281,18 @@ integer :: zplane_nstart=10000, zplane_nend=50000, zplane_nskip=10000
 integer :: zplane_nloc=1
 real(rprec), allocatable, dimension(:) :: zplane_loc
 
+! records phase-averaged data to files
+logical :: pavg_calc = .false.
+integer :: pavg_tstart = 1, pavg_tend = 50000, pavg_nbins = 100
+
+! records phase-averaged 2D data to files
+logical :: pavg2D_calc = .false.
+integer :: pavg2D_tstart = 1, pavg2D_tend = 50000, pavg2D_nbins = 100
+
+! records phase-averaged 2D spatial data to files
+logical :: pavg2Ds_calc = .false.
+integer :: pavg2Ds_tstart = 1, pavg2Ds_tend = 50000, pavg2Ds_nbins = 100
+
 ! wave instantaneous output
 logical :: waveplane_calc=.false.
 integer :: waveplane_nstart=10000, waveplane_nend=50000, waveplane_nskip=10000
@@ -288,4 +300,27 @@ integer :: waveplane_nstart=10000, waveplane_nend=50000, waveplane_nskip=10000
 ! mosd instantaneous output
 logical :: mosdplane_calc=.false.
 integer :: mosdplane_nstart=10000, mosdplane_nend=50000, mosdplane_nskip=10000
+
+! records correlation function data to files 
+logical :: corrfunc_spacespectra_calc = .false.
+integer :: corrfunc_spacespectra_nstart = 1, &
+           corrfunc_spacespectra_nend = 50000, corrfunc_spacespectra_nskip = 100
+integer :: nt = 1024
+integer :: corrfunc_spacespectra_nheights = 1   
+real(rprec), allocatable :: corrfunc_spacespectra_heights(:)
+
+! Spectral analysis parameters
+logical :: spectra_spacetime_calc = .false.
+integer :: spectra_spacetime_nstart = 10000, spectra_spacetime_nend = 50000000
+integer :: spectra_spacetime_nheights = 1
+integer :: spectra_window = 1024
+real(rprec) :: spectra_overlap = 0.75_rprec
+real(rprec), allocatable :: spectra_spacetime_heights(:)
+
+! spacetime instantaneous output
+logical :: spacetime_calc=.false.
+integer :: spacetime_nstart=10000, spacetime_nend=50000
+integer :: spacetime_nloc=1
+real(rprec), allocatable, dimension(:) :: spacetime_loc
+
 end module param

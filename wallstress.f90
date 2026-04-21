@@ -44,9 +44,8 @@ subroutine wallstress
 !           model for large eddy simulations of wall-bounded turbulent flows." (2015)
 !
 !   4 - MOving Surface Gradient (MOSD) model 
-!       Combination of stress from the equilibrium wall model fit and from
-!	the potential flow-based model. See Ayala, et al "A moving surface drag model 
-!       for LES of Wind Over Waves'. (2024)
+!       Combination of stress from the equilibrium wall model and from
+!	the potential flow-based model. See (fuiture Ayala paper) 
 !
 !   5 - Equilibirum wall model Fit
 !       See C. Meneveau. "A note on fitting a generalised Moody diagram for wall 
@@ -65,6 +64,7 @@ use iwmles, only : iwm_wallstress
 use sim_param, only : txz, tyz, dudz, dvdz
 use mosd_wm, only : mosd_finalize
 use eqmfit_wm, only: eqmfit_finalize
+use grid_m
 implicit none
 character(*), parameter :: sub_name = 'wallstress'
 
@@ -95,7 +95,7 @@ if (coord == 0) then
         case (5)
             call eqmfit_finalize()
 
-        ! MOSD with log-law eqm
+        ! MOSD with EQM non-fit
         case (6) 
             call mosd_loglaweqm
 
@@ -199,32 +199,30 @@ end subroutine ws_dns_ubc
 subroutine ws_equilibrium_lbc
 !*******************************************************************************
 use param, only : dz, ld, nx, ny, vonk, zo, total_time, dx, zgrid_match
-use sim_param, only : u, v, ustar_lbc, s_wpmxz, s_wpmyz, u_delta_m
+use sim_param, only : u, v, ustar_lbc, s_wpmxz, s_wpmyz, u_delta_m, delta_m
 use test_filtermodule
 #ifdef PPSCALARS
 use scalars, only : obukhov, phi_m
 #endif
 
 implicit none
-
 integer :: i, j
-integer :: dz_match_ind
-real(rprec) :: dz_match
+real(rprec), pointer, dimension(:) :: z
 real(rprec), dimension(nx, ny) :: denom, u_avg, u_match_avg
 real(rprec), dimension(ld, ny) :: u1, v1, x_grid, u1_match, v1_match
 real(rprec) :: const
-
+nullify(z)
+z => grid % z
 
 ! Calculating the velocity input, this is set up to manage any matching location 
-! specified in lesgo.conf. (e.g. zgrid_match=1.5 is at 2nd grid point and 
-! 2.5 is at 3rd)
-dz_match = zgrid_match*dz
-dz_match_ind = ceiling(zgrid_match)
-u1_match = u(1:ld,1:ny,dz_match_ind)
-v1_match = v(1:ld,1:ny,dz_match_ind)
+! specified in lesgo.conf. (e.g. zgrid_match=1 is at 1st uv grid point and 
+! zgrid_match=3 is at 3rd uv grid point)
+u1_match = u(1:ld,1:ny,zgrid_match)
+v1_match = v(1:ld,1:ny,zgrid_match)
 call test_filter(u1_match)
 call test_filter(v1_match)
-denom = log((dz_match)/zo)
+denom = log(z(zgrid_match)/zo)
+delta_m = z(zgrid_match)
 u_match_avg = sqrt(u1_match(1:nx,1:ny)**2+v1_match(1:nx,1:ny)**2)
 u_delta_m  = u_match_avg
 
@@ -273,7 +271,7 @@ subroutine mosd_loglaweqm
 
 use param, only : dz, ld, nx, ny, vonk, zo, total_time, dx, zgrid_match, jt_total
 use sim_param, only : u, v, ustar_lbc, u_orb, eta,  s_wpmxz, s_wpmyz, u_delta_m
-use sim_param, only : eqmxz, eqmyz
+use sim_param, only : eqmxz, eqmyz, delta_m
 use mosd_wm, only : wpm_calc
 use test_filtermodule
 #ifdef PPSCALARS
@@ -282,29 +280,29 @@ use scalars, only : obukhov, phi_m
 
 implicit none
 integer :: i, j
-integer :: dz_match_ind
-real(rprec) :: dz_match
+real(rprec), pointer, dimension(:) :: z
 real(rprec), dimension(nx, ny) :: denom, u_avg, ur_avg
 real(rprec), dimension(ld, ny) :: u1, v1, x_grid, ur1, vr1, ur_eqm, vr_eqm
 real(rprec) :: const
+nullify(z)
+z => grid % z
 
 ! Calling the stress from wave drag model (wpm). This also will create u_orb and
 ! eta 
 call wpm_calc()
 
 ! Calculating the velocity input, this is set up to manage any matching location 
-! specified in lesgo.conf. (e.g. zgrid_match=1.5 is at 2nd grid point and 
-! 2.5 is at 3rd)
-dz_match = zgrid_match*dz
-dz_match_ind = ceiling(zgrid_match)
-ur_eqm = u(1:ld,1:ny,dz_match_ind)
-vr_eqm = v(1:ld,1:ny,dz_match_ind)
+! specified in lesgo.conf. (e.g. zgrid_match=1 is at 1st uv grid point and 
+! zgrid_match=3 is at 3rd uv grid point)
+ur_eqm = u(1:ld,1:ny,zgrid_match)
+vr_eqm = v(1:ld,1:ny,zgrid_match)
 call test_filter(ur_eqm)
 call test_filter(vr_eqm)
 
 ur_eqm(1:nx,1:ny) = ur_eqm(1:nx,1:ny) - u_orb(1:nx,1:ny)
 vr_eqm(1:nx,1:ny) = vr_eqm(1:nx,1:ny)
-denom = log((dz_match-eta)/zo)
+denom = log((z(zgrid_match)-eta)/zo)
+delta_m = z(zgrid_match)
 ur_avg = sqrt(ur_eqm(1:nx,1:ny)**2+vr_eqm(1:nx,1:ny)**2)
 u_delta_m  = ur_avg
 

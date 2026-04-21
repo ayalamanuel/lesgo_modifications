@@ -419,6 +419,7 @@ time_loop: do jt_step = nstart, nsteps
             write(*,'(a,E15.7)') '  Bot EQM stress: ', get_eqm_wall_bot()
             write(*,'(a,E15.7)') '  Bot WPM stress: ', get_wpm_wall_bot()
             write(*,'(a,E15.7)') '  u_delta_m: ', get_uLES()
+            write(*,'(a,E15.7)') '  delta_m: ', delta_m
       end if 
 #ifdef PPMPI
             write(*,'(a,E15.7)') '  Top wall stress: ', tau_top

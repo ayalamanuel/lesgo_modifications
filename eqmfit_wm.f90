@@ -56,23 +56,22 @@ end subroutine eqmfit_finalize
 subroutine eqmfit_calc ()
 !*******************************************************************************
 use param, only: lbc_mom
-use sim_param, only: dudz, dvdz, u_orb, eta
+use sim_param, only: dudz, dvdz, u_orb, eta, delta_m
 
 implicit none
-integer :: dz_match_ind
-real(rprec) :: dz_match
+real(rprec), pointer, dimension(:) :: z
 real(rprec), dimension(ld, ny) :: u_eqm, v_eqm, u1, v1
 real(rprec), dimension(nx, ny) :: ur_eqm, vr_eqm, u_avg,Re_delta, beta_1,   &
                                   beta_2, Re_fit, Re_delta2, beta_12,       &
                                   beta_22, Re_fit2, A, A2, delta_fit
+nullify(z)
+z => grid % z
 
 ! Calculating the velocity input, this is set up to manage any matching location 
-! specified in lesgo.conf. (e.g. zgrid_match=1.5 is at 2nd grid point and 
-! 2.5 is at 3rd)
-dz_match = zgrid_match*dz
-dz_match_ind = ceiling(zgrid_match)
-u_eqm = u(1:ld,1:ny,dz_match_ind)
-v_eqm = v(1:ld,1:ny,dz_match_ind)
+! specified in lesgo.conf. (e.g. zgrid_match=1 is at 1st uv grid point and 
+! zgrid_match=3 is at 3rd uv grid point)
+u_eqm = u(1:ld,1:ny,zgrid_match)
+v_eqm = v(1:ld,1:ny,zgrid_match)
 call test_filter(u_eqm)
 call test_filter(v_eqm)
 
@@ -96,7 +95,8 @@ u_avg = sqrt(u1(1:nx,1:ny)**2+v1(1:nx,1:ny)**2)
 ! Calculating the parameters for the EQM model. We calcualte 2 sets because 
 ! the second is used for the calculation of dudz,dvdz which is at 1st grid point
 u_delta_m  = sqrt((ur_eqm(:,:))**2 + (vr_eqm(:,:))**2)
-delta_fit = dz_match - eta
+delta_fit = z(zgrid_match) - eta
+delta_m = z(zgrid_match)
 Re_delta = ((u_delta_m(:,:)*u_star)*((delta_fit)*z_i))/nu_molec
 beta_1 = (1_rprec + 0.155_rprec*Re_delta(:,:)**(-0.03_rprec))**(-1_rprec)
 beta_2 = 1.7_rprec - (1_rprec + 36_rprec*Re_delta(:,:)**(-0.75_rprec))**(-1_rprec)
