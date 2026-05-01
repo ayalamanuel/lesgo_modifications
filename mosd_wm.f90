@@ -27,12 +27,12 @@ module mosd_wm
 use types, only : rprec
 use param, only : wave_type, nx, ny, ld, dx, dz, dt, total_time_dim, total_time,&
                   amp, wave_n, wave_freq, u_star, z_i, pi, kp_spec, zgrid_match,&
-                  nu_molec, vonk, zo, smooth_eqm, dy, coord, nz
+                  nu_molec, vonk, zo, smooth_eqm, dy, coord, nz, dx
 use sim_param, only : eqmxz, eqmyz, s_wpmxz, s_wpmyz, eta, &
                       detadx, detady, detadt, u_orb, w_orb, deta2dx2, deta2dy2, &
                       detadxdy, detadydx, grad_eta_mag, dgrad_etadt,&
                       Cx_wave,Cy_wave, ur_mag_wpm, ur_mag_eqm, &
-                      u_delta_m, u, v, detadx_dt, detady_dt
+                      u_LES, u, v, detadx_dt, detady_dt
 use sim_param, only : eta_hat_o, eta_hat_o_filter, omega_wave
 use sim_param, only : delta_wpm
 use grid_m
@@ -382,6 +382,7 @@ if (delta_wpm > z(nz-1)) then
     write(*,*) 'z(nz-1) for coord=0 = ', z(nz-1)
     write(*,*) '***********************************************'
 call error (sub_name, 'invalid')
+stop 
 end if
 
 ! Taking the velocity for wpm at a height Delta = 3*Hp. If for some reason this height location is 
@@ -422,11 +423,6 @@ k_min = 0.25_rprec*(kp_spec)
 threshold_wave_speed = sqrt(9.81_rprec/k_min)/u_star
 Cx_wave = min(max(Cx_wave(:,:),-threshold_wave_speed),threshold_wave_speed)
 Cy_wave = min(max(Cy_wave(:,:),-threshold_wave_speed),threshold_wave_speed)
-end if
-
-if (wave_type == 3) then
-Cx_wave = wave_freq/wave_n
-Cy_wave = 0.0_rprec
 end if
 
 ! Calcualting the realtive velocities. u_delta and v_delta are already filtered 
